@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lịch công tác</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#faf7f2;--card:#fff;--ink:#241c1a;--mute:#6f6460;--line:#e7dfd6;--red:#9d1f1f;--soft:#f6e4e1;--gold:#b8893a;--cream:#fdf3d8}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Be Vietnam Pro",system-ui,"Segoe UI",Roboto,sans-serif}
+.app{max-width:980px;margin:0 auto;padding:0 16px 40px}
+header{text-align:center;padding:22px 0 8px}h1{font-size:22px;line-height:1.35;margin:0 0 4px;color:var(--red)}.sub{margin:0;color:var(--mute);font-size:14px}
+button,select,input{font:inherit;color:inherit}input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.tools,.admb,.bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.b{padding:9px 14px;border:1px solid var(--line);background:var(--card);border-radius:10px;font-weight:600;cursor:pointer}
+.b.p{background:var(--red);border-color:var(--red);color:#fff}.admb{padding:10px;background:var(--cream);border-radius:12px}
+.me{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-end;font-size:14px;color:var(--mute)}
+.bar select{flex:1;min-width:180px}.bar .b{width:44px;padding:9px 0}
+h2{font-size:16px;margin:0 0 8px}.abs{background:var(--cream);border-left:4px solid var(--gold);border-radius:12px;padding:12px 14px;margin-bottom:14px}.abs h2{color:var(--red)}.abs p{margin:2px 0;font-size:15px}
+.day{margin-bottom:18px}.day>h2{background:var(--red);color:#fff;border-radius:10px;padding:8px 14px}.day.today>h2{background:#2a1a17;box-shadow:inset 0 -3px 0 var(--gold)}
+.part{font-weight:600;color:var(--mute);font-size:14px;margin:10px 0 6px}.none{color:var(--mute);font-size:14px;margin:6px 4px}
+.ev{display:grid;grid-template-columns:58px 1fr;gap:12px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.t{font-weight:700;font-variant-numeric:tabular-nums}.ev h3{font-size:15px;margin:0 0 2px}.who{margin:0 0 2px;font-weight:600;color:var(--red);font-size:14px}.m{margin:0;font-size:14px;color:var(--mute)}
+.w{color:#a85a00;font-size:13px;font-weight:600;margin:2px 0 0}.acts{margin-top:4px}.lk{background:none;border:0;color:var(--red);font-weight:600;cursor:pointer;padding:4px 10px 4px 0;font-size:14px}
+dialog{border:0;border-radius:16px;padding:20px;width:min(520px,94vw);background:var(--bg);color:var(--ink);max-height:92vh;overflow:auto}dialog::backdrop{background:rgba(0,0,0,.55)}
+label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}.ck{display:flex;gap:8px;align-items:center;font-weight:400;margin:4px 0}.ck input{width:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{width:100%;margin-top:10px}.hit{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:8px 0;cursor:pointer}
+.ld{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:6px 0}.ld select{width:auto;margin-top:4px;padding:4px 8px;font-size:14px}.ld small{color:var(--mute)}
+.err{color:#b00020;font-size:14px;margin:6px 0 0}.hint{color:var(--mute);font-size:13px;margin:4px 0 0}pre{white-space:pre-wrap;font-size:12px;max-height:55vh;overflow:auto;margin:0}
+@media print{.noprint{display:none!important}body{background:#fff}.ev,.abs{break-inside:avoid}}
+</style></head><body>
+<div class="app">
+<header><h1 id="ttl"></h1><p class="sub" id="rng"></p><p class="sub" id="upd"></p></header>
+<div class="me noprint" id="meBar" hidden><span id="meTxt"></span><button class="lk" id="aPw">Đổi mật khẩu</button><button class="lk" id="aOut">Đăng xuất</button></div>
+<div class="tools noprint"><button class="b" id="bToday">Lịch hôm nay</button><button class="b" id="bFind">Tra cứu</button><button class="b" id="bPrint">In lịch</button><button class="b" id="bReload">Tải lại</button><button class="b p" id="bLogin" hidden>Đăng nhập</button></div>
+<div class="admb noprint" id="admb" hidden><button class="b p" id="aEv">+ Thêm lịch</button><button class="b" id="aAbs">+ Lãnh đạo đi công tác</button><button class="b" id="aLead" hidden>Đơn vị và lãnh đạo</button><button class="b" id="aUsers" hidden>Tài khoản</button><button class="b" id="aLog" hidden>Nhật ký hoạt động</button></div>
+<div class="bar noprint"><button class="b" id="prev" aria-label="Tuần trước">‹</button><select id="who" aria-label="Xem theo lãnh đạo"></select><button class="b" id="next" aria-label="Tuần sau">›</button></div>
+<section id="abs"></section><main id="week"></main></div>
+
+<dialog id="login"><h2>Đăng nhập</h2><label for="lu">Tên đăng nhập</label><input id="lu" autocomplete="username" autocapitalize="none"><label for="lp">Mật khẩu</label><input id="lp" type="password" autocomplete="current-password"><p class="err" id="lerr"></p><button class="b p full" id="lgo">Đăng nhập</button><button class="b full" id="lc">Đóng</button></dialog>
+<dialog id="pw"><h2 id="pwT"></h2><label for="po">Mật khẩu hiện tại</label><input id="po" type="password" autocomplete="current-password"><label for="pn">Mật khẩu mới</label><input id="pn" type="password" autocomplete="new-password"><p class="hint">Từ 8 ký tự, có cả chữ và số, khác mật khẩu cũ.</p><label for="pn2">Nhập lại mật khẩu mới</label><input id="pn2" type="password" autocomplete="new-password"><p class="err" id="perr"></p><button class="b p full" id="pwS">Đổi mật khẩu</button><button class="b full" id="pwC">Hủy</button></dialog>
+<dialog id="ev"><h2 id="evT"></h2><label for="eTitle">Nội dung công việc</label><input id="eTitle" maxlength="300">
+<label>Lãnh đạo (bỏ trống nếu là tập thể lãnh đạo)</label><div id="eLead"></div>
+<div class="two"><div><label for="eDate">Ngày</label><input id="eDate" type="date"></div><div><label for="eTime">Giờ</label><input id="eTime" type="time"></div></div>
+<label for="ePlace">Địa điểm</label><input id="ePlace" maxlength="200"><label for="ePeople">Thành phần</label><input id="ePeople" maxlength="300"><label for="eNote">Ghi chú</label><input id="eNote" maxlength="300">
+<button class="b p full" id="eSave">Lưu lịch</button><button class="b full" data-close>Hủy</button></dialog>
+<dialog id="abd"><h2>Lãnh đạo đi công tác</h2><label for="aWho">Đồng chí</label><select id="aWho"></select>
+<div class="two"><div><label for="aFrom">Từ ngày</label><input id="aFrom" type="date"></div><div><label for="aTo">Đến ngày</label><input id="aTo" type="date"></div></div>
+<label for="aWhy">Nội dung</label><input id="aWhy" maxlength="300"><button class="b p full" id="aSave">Lưu</button><button class="b full" data-close>Hủy</button></dialog>
+<dialog id="ld"><h2>Đơn vị và lãnh đạo</h2><label for="lTitle">Tiêu đề trang</label><input id="lTitle" maxlength="200"><label>Danh sách lãnh đạo</label><div id="lList"></div>
+<div class="two" style="margin-top:8px"><input id="lNew" placeholder="Chức danh, họ tên" maxlength="100"><button class="b" id="lAdd">Thêm</button></div>
+<button class="b p full" id="lSave">Lưu thay đổi</button><button class="b full" id="lCancel">Hủy</button></dialog>
+<dialog id="ud"><h2>Quản lý tài khoản</h2><div id="uList"></div><h2 style="margin-top:16px">Thêm tài khoản</h2>
+<label for="nu">Tên đăng nhập (chữ thường không dấu)</label><input id="nu" autocapitalize="none" autocomplete="off"><label for="nn">Họ và tên</label><input id="nn" autocomplete="off">
+<label for="nr">Vai trò</label><select id="nr"><option value="user">Nhập lịch</option><option value="viewer">Chỉ xem</option><option value="admin">Quản trị</option></select>
+<label for="np">Mật khẩu tạm</label><input id="np" type="text" autocomplete="off"><p class="hint">Từ 8 ký tự, có chữ và số. Người dùng phải đổi ngay khi đăng nhập lần đầu.</p>
+<button class="b p full" id="nAdd">Tạo tài khoản</button><button class="b full" data-close>Đóng</button></dialog>
+<dialog id="log"><h2>Nhật ký hoạt động (200 dòng gần nhất)</h2><pre id="logText"></pre><button class="b full" data-close>Đóng</button></dialog>
+<dialog id="find"><h2>Tra cứu</h2><input id="q" placeholder="Nội dung, địa điểm, thành phần, lãnh đạo"><div id="qr"></div><button class="b full" data-close>Đóng</button></dialog>
+<script src="/app.js"></script>
+</body></html>
